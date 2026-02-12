@@ -47,7 +47,7 @@ jobs:
       
       - name: Upload to S3
         run: |
-          aws s3 sync menus/ s3://${{ secrets.S3_BUCKET_NAME }}/menus/ --delete
+          aws s3 sync menus/ s3://${{ secrets.S3_BUCKET_NAME }}/menus/
       
       - name: Show success message
         run: echo "✅ Menu data uploaded successfully to S3!"

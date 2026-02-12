@@ -198,11 +198,9 @@ def extract_hyeat_data(html_content):
 
                 daily_results[target_date][res_id][c_id] = menu_data
 
-    # 4. 파일 저장 (menus/ 디렉토리)
-    output_dir = "menus"
-    if not os.path.exists(output_dir):
-        os.makedirs(output_dir)
-
+    # 4. 파일 저장 (현재 디렉토리)
+    output_dir = "."
+    
     for date, data in daily_results.items():
         filename = os.path.join(output_dir, f"{date}.json")
         with open(filename, 'w', encoding='utf-8') as f:

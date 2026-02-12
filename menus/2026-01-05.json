@@ -1,0 +1,156 @@
+{
+  "hanyang_plaza": {
+    "breakfast_1000": {
+      "restaurantId": "hanyang_plaza",
+      "cornerId": "breakfast_1000",
+      "cornerDisplayName": "천원의 아침밥",
+      "mainMenuName": "천원의 아침밥",
+      "priceWon": 1000,
+      "items": [
+        "A/B 메뉴 중 선택"
+      ],
+      "variants": [
+        {
+          "mainMenuName": "[백반식]쌀밥",
+          "items": [
+            "떡만둣국",
+            "동그랑땡",
+            "시금치나물",
+            "김치",
+            "식혜"
+          ]
+        },
+        {
+          "mainMenuName": "[간편식]참치마요삼각김밥",
+          "items": [
+            "영양약밥",
+            "식혜"
+          ]
+        }
+      ]
+    },
+    "western": {
+      "restaurantId": "hanyang_plaza",
+      "cornerId": "western",
+      "cornerDisplayName": "양식",
+      "mainMenuName": "등심돈까스",
+      "priceWon": 4200,
+      "items": []
+    },
+    "korean": {
+      "restaurantId": "hanyang_plaza",
+      "cornerId": "korean",
+      "cornerDisplayName": "한식",
+      "mainMenuName": "치킨마요덮밥",
+      "priceWon": 4200,
+      "items": []
+    },
+    "instant": {
+      "restaurantId": "hanyang_plaza",
+      "cornerId": "instant",
+      "cornerDisplayName": "즉석",
+      "mainMenuName": "부대찌개",
+      "priceWon": 4500,
+      "items": []
+    },
+    "cupbap": {
+      "restaurantId": "hanyang_plaza",
+      "cornerId": "cupbap",
+      "cornerDisplayName": "오늘의 컵밥",
+      "mainMenuName": "참치마요덮밥",
+      "priceWon": 4500,
+      "items": [
+        "&오징어핫바"
+      ]
+    }
+  },
+  "materials": {
+    "set_meal": {
+      "restaurantId": "materials",
+      "cornerId": "set_meal",
+      "cornerDisplayName": "정식",
+      "mainMenuName": "차돌김치찌개",
+      "priceWon": 6000,
+      "items": [
+        "흑미밥",
+        "뿌링클치킨너겟",
+        "베이컨숙주볶음",
+        "파절이",
+        "석박지",
+        "매실차"
+      ]
+    },
+    "single_dish": {
+      "restaurantId": "materials",
+      "cornerId": "single_dish",
+      "cornerDisplayName": "일품",
+      "mainMenuName": "매콤분모자떡볶이",
+      "priceWon": 6500,
+      "items": [
+        "잔치국수",
+        "핫바*케찹",
+        "콘샐러드",
+        "비트무피클",
+        "배추김치"
+      ]
+    },
+    "dinner": {
+      "restaurantId": "materials",
+      "cornerId": "dinner",
+      "cornerDisplayName": "석식",
+      "mainMenuName": "닭곰탕*소면사리",
+      "priceWon": 6000,
+      "items": [
+        "백미밥",
+        "연두부&양념장",
+        "참치김치볶음",
+        "고추된장무침",
+        "배추김치"
+      ]
+    }
+  },
+  "life_science": {
+    "dam_a_lunch": {
+      "restaurantId": "life_science",
+      "cornerId": "dam_a_lunch",
+      "cornerDisplayName": "중식 Dam-A",
+      "mainMenuName": "(뚝)날치알밥",
+      "priceWon": 6000,
+      "items": [
+        "미역국",
+        "비엔나브로콜리볶음",
+        "무말랭이건고춧잎무침",
+        "포기김치",
+        "요구르트"
+      ]
+    },
+    "pangeos_lunch": {
+      "restaurantId": "life_science",
+      "cornerId": "pangeos_lunch",
+      "cornerDisplayName": "중식 Pangeos",
+      "mainMenuName": "눈꽃치즈돈가스",
+      "priceWon": 6500,
+      "items": [
+        "아라비아따파스타",
+        "팽이버섯미소장국",
+        "후리가케밥",
+        "피클&할라피뇨",
+        "요구르트"
+      ]
+    },
+    "dam_a_dinner": {
+      "restaurantId": "life_science",
+      "cornerId": "dam_a_dinner",
+      "cornerDisplayName": "석식 Dam-A",
+      "mainMenuName": "(뚝)사골떡만두국",
+      "priceWon": 6000,
+      "items": [
+        "알옥수수김치전",
+        "도토리묵*양념장",
+        "양념깻잎지",
+        "깍두기",
+        "쌀밥"
+      ]
+    }
+  }
+}

@@ -1,0 +1,119 @@
+{
+  "hanyang_plaza": {
+    "western": {
+      "restaurantId": "hanyang_plaza",
+      "cornerId": "western",
+      "cornerDisplayName": "양식",
+      "mainMenuName": "고구마돈까스",
+      "priceWon": 4200,
+      "items": []
+    },
+    "korean": {
+      "restaurantId": "hanyang_plaza",
+      "cornerId": "korean",
+      "cornerDisplayName": "한식",
+      "mainMenuName": "비프하이라이스",
+      "priceWon": 4200,
+      "items": []
+    },
+    "instant": {
+      "restaurantId": "hanyang_plaza",
+      "cornerId": "instant",
+      "cornerDisplayName": "즉석",
+      "mainMenuName": "치킨누들스프",
+      "priceWon": 4500,
+      "items": []
+    }
+  },
+  "materials": {
+    "set_meal": {
+      "restaurantId": "materials",
+      "cornerId": "set_meal",
+      "cornerDisplayName": "정식",
+      "mainMenuName": "경상도식",
+      "priceWon": 6000,
+      "items": [
+        "소고기국",
+        "흑미밥",
+        "꼬마돈가스*케찹",
+        "마늘쫑햄볶음",
+        "오복지무침",
+        "배추김치",
+        "석류차"
+      ]
+    },
+    "single_dish": {
+      "restaurantId": "materials",
+      "cornerId": "single_dish",
+      "cornerDisplayName": "일품",
+      "mainMenuName": "날치알김치볶음밥&후라이",
+      "priceWon": 6500,
+      "items": [
+        "새우튀김우동",
+        "마카로니샐러드",
+        "단무지무침",
+        "요구르트",
+        "배추김치"
+      ]
+    },
+    "dinner": {
+      "restaurantId": "materials",
+      "cornerId": "dinner",
+      "cornerDisplayName": "석식",
+      "mainMenuName": "뼈없는",
+      "priceWon": 6000,
+      "items": [
+        "감자탕",
+        "백미밥",
+        "미트볼야채볶음",
+        "맛살샐러드",
+        "콩자반",
+        "배추김치"
+      ]
+    }
+  },
+  "life_science": {
+    "dam_a_lunch": {
+      "restaurantId": "life_science",
+      "cornerId": "dam_a_lunch",
+      "cornerDisplayName": "중식 Dam-A",
+      "mainMenuName": "(뚝)설렁탕&소면",
+      "priceWon": 6000,
+      "items": [
+        "제육두루치기&온두부",
+        "연근조림",
+        "양파초절임",
+        "깍두기",
+        "현미밥"
+      ]
+    },
+    "pangeos_lunch": {
+      "restaurantId": "life_science",
+      "cornerId": "pangeos_lunch",
+      "cornerDisplayName": "중식 Pangeos",
+      "mainMenuName": "불맛닭고기덮밥",
+      "priceWon": 6500,
+      "items": [
+        "온모밀국수",
+        "사모사튀김",
+        "단무지",
+        "요구르트",
+        "포기김치"
+      ]
+    },
+    "dam_a_dinner": {
+      "restaurantId": "life_science",
+      "cornerId": "dam_a_dinner",
+      "cornerDisplayName": "석식 Dam-A",
+      "mainMenuName": "(철판)치즈떡갈비스테이크",
+      "priceWon": 6000,
+      "items": [
+        "매콤알리오올리오",
+        "유부장국",
+        "추가밥",
+        "피클&할라피뇨",
+        "깍두기"
+      ]
+    }
+  }
+}

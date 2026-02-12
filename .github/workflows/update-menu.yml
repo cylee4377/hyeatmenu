@@ -24,8 +24,19 @@ jobs:
           python -m pip install --upgrade pip
           pip install -r requirements.txt
       
+      - name: Check Python version
+        run: python --version
+      
       - name: Run menu parser
-        run: python hyeat_parser.py
+        run: |
+          echo "Starting menu parser..."
+          python hyeat_parser.py
+          echo "Parser completed successfully"
+      
+      - name: List generated files
+        run: |
+          echo "Generated JSON files:"
+          ls -la menus/ || echo "menus directory not found"
       
       - name: Configure AWS credentials
         uses: aws-actions/configure-aws-credentials@v4

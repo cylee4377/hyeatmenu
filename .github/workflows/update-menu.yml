@@ -1,9 +1,9 @@
-name: Update Menu Data
+name: Update Hanyang Menu Data
 
 on:
   schedule:
-    # 매주 월요일 오전 5시(KST 기준)에 실행 (UTC 20:00 일요일 = KST 05:00 월요일)
-    - cron: '0 20 * * 0'
+    # 매주 월요일 오전 5시 (KST) 실행
+    - cron: '0 20 * * 0'  # UTC 20:00 일요일 = KST 05:00 월요일
   workflow_dispatch:  # 수동 실행 가능
 
 jobs:
@@ -32,12 +32,11 @@ jobs:
         with:
           aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
           aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
-          aws-region: ap-northeast-2  # 서울 리전 (필요시 변경)
+          aws-region: ap-northeast-2
       
       - name: Upload to S3
         run: |
-          aws s3 sync menus/ s3://${{ secrets.S3_BUCKET_NAME }}/menus/ \
-            --delete
+          aws s3 sync menus/ s3://${{ secrets.S3_BUCKET_NAME }}/menus/ --delete
       
-      - name: Show completion message
-        run: echo "Menu data updated successfully!"
+      - name: Show success message
+        run: echo "✅ Menu data uploaded successfully to S3!"

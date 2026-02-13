@@ -9,6 +9,7 @@ on:
 jobs:
   fetch-and-upload:
     runs-on: ubuntu-latest
+    environment: ${{ github.ref == 'refs/heads/main' && 'main' || 'development' }}
     
     steps:
       - name: Checkout repository

@@ -27,8 +27,14 @@ jobs:
       - name: Check Python version
         run: python --version
       
+      - name: Debug - List menus before cleanup
+        run: ls -R menus/ || echo "menus not found"
+
       - name: Clean up old menus
         run: rm -rf menus/
+
+      - name: Debug - List menus after cleanup
+        run: ls -R menus/ || echo "menus correctly deleted"
 
       - name: Run menu parser
         run: |

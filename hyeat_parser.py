@@ -4,22 +4,31 @@ import requests
 import re
 import json
 import os
+from typing import Dict, Any, List, Optional
 from datetime import datetime, timedelta
 from bs4 import BeautifulSoup
+from dotenv import load_dotenv
+
+load_dotenv()
+
+# Environment Variables
+MENU_URL = os.getenv("MENU_URL", "https://fnb.hanyang.ac.kr/front/fnbmMdMenu")
+OUTPUT_DIR = os.getenv("OUTPUT_DIR", "menus")
+USER_AGENT = os.getenv("USER_AGENT", "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36")
 
 def fetch_menu_html(date_str=None):
     """
     Fetches menu HTML from the Hanyang University F&B website.
     Optionally accepts a date string (YYYY-MM-DD).
     """
-    url = "https://fnb.hanyang.ac.kr/front/fnbmMdMenu"
+    url = MENU_URL
     params = {}
     if date_str:
         params['date'] = date_str
     
     # User-Agent header to mimic a browser
     headers = {
-        'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36'
+        'User-Agent': USER_AGENT
     }
     
     try:
@@ -41,7 +50,12 @@ def extract_hyeat_data(html_content):
         return
 
     first_day_text = first_day_element.get_text(strip=True)
-    base_date = datetime.strptime(re.search(r'\d{4}-\d{2}-\d{2}', first_day_text).group(), '%Y-%m-%d')
+    date_match = re.search(r'\d{4}-\d{2}-\d{2}', first_day_text)
+    if not date_match:
+        print("Error: 날짜 패턴을 찾을 수 없습니다.")
+        return
+        
+    base_date = datetime.strptime(date_match.group(), '%Y-%m-%d')
     
     # 요일 인덱스 매핑
     day_map = {'월': 0, '화': 1, '수': 2, '목': 3, '금': 4, '토': 5, '일': 6}
@@ -84,7 +98,8 @@ def extract_hyeat_data(html_content):
     }
 
     # 날짜별 데이터를 담을 딕셔너리
-    daily_results = {}
+    # Type hint to resolve static analysis confusion
+    daily_results: Dict[str, Dict[str, Dict[str, Any]]] = {}
 
     # 주간 식단 컨테이너 탐색
     week_containers = soup.select('.shop-week-container')
@@ -100,12 +115,12 @@ def extract_hyeat_data(html_content):
         day_containers = container.select('.day-container')
         for day_section in day_containers:
             day_name = day_section.select_one('.day span').get_text(strip=True)
-            target_date = (base_date + timedelta(days=day_map[day_name])).strftime('%Y-%m-%d')
+            target_date = (base_date + timedelta(days=day_map[day_name])).strftime('%Y-%m-%d') # type: ignore
             
             if target_date not in daily_results:
-                daily_results[target_date] = {}
-            if res_id not in daily_results[target_date]:
-                daily_results[target_date][res_id] = {}
+                daily_results[target_date] = {} # type: ignore
+            if res_id not in daily_results[target_date]: # type: ignore
+                daily_results[target_date][res_id] = {} # type: ignore
 
             # 메뉴 리스트 파싱
             items_list = day_section.select('.content-item')
@@ -134,28 +149,56 @@ def extract_hyeat_data(html_content):
                 if c_id == "unknown": continue
 
                 # 메뉴명 및 상세 아이템 분리 (기본 로직)
+                # Try to find a title element (often main menu name for Hanyang Plaza / Breakfast)
+                title_elem = item.select_one('.content-item-title')
+                title_text = title_elem.get_text(strip=True) if title_elem else ""
+
                 parts = raw_desc.replace(',', ' ').split()
                 main_menu = parts[0] if parts else "운영없음"
                 sub_items = parts[1:] if len(parts) > 1 else []
                 variants = []
 
-                # Breakfast 1000 Variants Logic (Regex based)
+                # --- Issue 1: Hanyang Plaza General Logic (Side Dishes) ---
+                if res_id == 'hanyang_plaza' and c_id != 'breakfast_1000':
+                    # Hanyang Plaza: Main menu is often in .content-item-title
+                    # Description contains side dishes.
+                    # If title exists, use it as main_menu.
+                    if title_text:
+                        main_menu = title_text
+                        # Description text becomes the items list
+                        if raw_desc:
+                            sub_items = raw_desc.replace(',', ' ').split()
+                        else:
+                            sub_items = []
+                    else:
+                        # Fallback if no title element found (use existing logic)
+                        pass
+
+                # --- Issue 2: Breakfast 1000 Variants Logic ---
                 if c_id == 'breakfast_1000':
                     main_menu = "천원의 아침밥"
                     sub_items = ["A/B 메뉴 중 선택"]
                     
-                    # Remove '★품절' and other noise
-                    clean_desc = raw_desc.replace('★품절', '').strip()
+                    # Combine title and desc to catch all variants (Baekban + Ganpyeon)
+                    # Often title has one, desc has the other, or both mixed.
+                    # We'll parse the combined text.
+                    combined_text = f"{title_text} {raw_desc}"
                     
-                    # User-requested Regex: Matches [Any Marker] followed by content
+                    # Remove '★품절' and other noise
+                    clean_text = combined_text.replace('★품절', '').strip()
+                    
+                    # Regex: Matches [Marker] followed by content
+                    # e.g., [백반식 130식]... [간편식 70식]...
                     pattern = r'(\[[^\]]+\])([^\[]*)'
-                    matches = re.findall(pattern, clean_desc)
+                    matches = re.findall(pattern, clean_text)
                     
                     if matches:
                         for marker, content in matches:
                             content_parts = content.strip().replace(',', ' ').split()
                             if content_parts:
-                                # Construct variant name: Marker + First Item (e.g., [백반식]쌀밥)
+                                # Variant Main Menu: Marker + First Item (e.g., [백반식]쌀밥)
+                                # Or just Marker if user prefers.
+                                # User requested: "[백반식 130식]잡곡밥" as mainMenuName
                                 v_main = f"{marker}{content_parts[0]}"
                                 v_items = content_parts[1:]
                                 variants.append({
@@ -163,18 +206,19 @@ def extract_hyeat_data(html_content):
                                     "items": v_items
                                 })
                             else:
-                                # Case where content is empty or just spaces after marker
+                                # Case where content is empty -> just marker
                                 variants.append({
                                     "mainMenuName": marker,
                                     "items": []
                                 })
                     else:
-                        # Fallback: No markers found, treat entire description as one variant
-                        # To prevent data loss
-                        if clean_desc:
-                            parts = clean_desc.replace(',', ' ').split()
+                        # Fallback: No markers found
+                        if clean_text:
+                            # Try to split by known keywords if regex fails?
+                            # For now, just treat as single variant to avoid data loss
+                            parts = clean_text.replace(',', ' ').split()
                             variants.append({
-                                "mainMenuName": parts[0] if parts else clean_desc,
+                                "mainMenuName": parts[0] if parts else clean_text,
                                 "items": parts[1:] if len(parts) > 1 else []
                             })
 
@@ -182,8 +226,8 @@ def extract_hyeat_data(html_content):
                 price = 0
                 if c_id == 'breakfast_1000':
                     price = 1000
-                elif res_id in CORNER_PRICES and c_id in CORNER_PRICES[res_id]:
-                    price = CORNER_PRICES[res_id][c_id]
+                elif res_id in CORNER_PRICES and c_id in CORNER_PRICES[res_id]: # type: ignore
+                    price = CORNER_PRICES[res_id][c_id] # type: ignore
 
                 menu_data = {
                     "restaurantId": res_id,
@@ -199,8 +243,154 @@ def extract_hyeat_data(html_content):
 
                 daily_results[target_date][res_id][c_id] = menu_data
 
+                if variants:
+                    menu_data["variants"] = variants
+
+                daily_results[target_date][res_id][c_id] = menu_data
+
+    # --- New Logic: Iterative Daily Enrichment (Weekly + Daily Checks) ---
+    # Loop through all dates identified in the Weekly view.
+    # Fetch the specific daily page for each date to get detailed info (sides, variants).
+    
+    print("\n--- Starting Daily Enrichment (Fetching detailed data for each day) ---")
+    
+    # Sort dates to process in order
+    sorted_dates = sorted(daily_results.keys())
+    
+    for today_date in sorted_dates:
+        print(f"[{today_date}] Fetching detailed metadata...")
+        daily_html = fetch_menu_html(today_date)
+        if not daily_html:
+            print(f"[{today_date}] Failed to fetch HTML. Skipping.")
+            continue
+            
+        day_soup = BeautifulSoup(daily_html, 'html.parser')
+        
+        # 1. Enrich General Corners from #today slider
+        today_section = day_soup.select_one('#today')
+        if today_section:
+            # Verify date matches (just in case)
+            date_elem = today_section.select_one('.date')
+            if date_elem:
+                date_text = date_elem.get_text(strip=True)
+                # Ensure we are looking at the right day
+                if today_date not in date_text:
+                    print(f"[{today_date}] Date mismatch in #today section ({date_text}). Skipping.")
+                    continue
+
+            today_slides = today_section.select('.menu-slide-item')
+            for slide in today_slides:
+                shop_id = slide.get('id', '')
+                res_id = restaurant_map.get(shop_id)
+                if not res_id: continue
+                
+                # USER FEEDBACK: Skip Materials and Life Science for daily enrichment.
+                # Weekly parsing works fine for them, and daily enrichment breaks the item separation.
+                if res_id in ['materials', 'life_science']:
+                    continue
+
+                # Ensure dict exists (it should from weekly parsing)
+                if res_id not in daily_results[today_date]:
+                    daily_results[today_date][res_id] = {}
+
+                menu_items = slide.select('li > .wrapper')
+                for item in menu_items:
+                    cat = item.select_one('.category').get_text(strip=True)
+                    
+                    # Life Science Logic
+                    if res_id == 'life_science':
+                            if "중식" in cat and "Dam-A" in cat: c_id = "dam_a_lunch"
+                            elif "중식" in cat and "Pangeos" in cat: c_id = "pangeos_lunch"
+                            elif "석식" in cat and "Dam-A" in cat: c_id = "dam_a_dinner"
+                            else: c_id = "unknown"
+                    else:
+                        c_id = corner_map.get(cat, "unknown")
+                    
+                    if c_id == "unknown": continue
+
+                    title_elem = item.select_one('.title')
+                    desc_elem = item.select_one('.desc')
+                    
+                    daily_title = title_elem.get_text(strip=True) if title_elem else ""
+                    daily_desc = desc_elem.get_text(strip=True) if desc_elem else ""
+                    if daily_desc == "-": daily_desc = ""
+
+                    # Existing data from weekly
+                    existing_data = daily_results[today_date][res_id].get(c_id, {})
+                    
+                    # Daily view structure: Title = Main, Desc = Items (Sides)
+                    items_fixed = daily_desc.replace(',', ' ').split() if daily_desc else []
+                    
+                    # Update fields
+                    existing_data.update({
+                        "restaurantId": res_id,
+                        "cornerId": c_id,
+                        "cornerDisplayName": cat,
+                        "mainMenuName": daily_title,
+                        "items": items_fixed
+                    })
+                    
+                    # Price fix
+                    if "priceWon" not in existing_data or existing_data["priceWon"] == 0:
+                        price = 0
+                        if res_id in CORNER_PRICES and c_id in CORNER_PRICES[res_id]:
+                            price = CORNER_PRICES[res_id][c_id]
+                        existing_data["priceWon"] = price
+
+                    daily_results[today_date][res_id][c_id] = existing_data
+
+        # 2. Enrich Breakfast 1000 from #donation section
+        # The #donation section ALWAYS shows the data for the 'date' parameter passed in URL
+        donation_section = day_soup.select_one('#donation')
+        if donation_section:
+            res_id = 'hanyang_plaza'
+            c_id = 'breakfast_1000'
+            
+            # Use 'today_date' (outer loop variable) directly
+            
+            if res_id not in daily_results[today_date]:
+                daily_results[today_date][res_id] = {}
+
+            donation_item = donation_section.select_one('.menu-donation')
+            if donation_item:
+                title_elem = donation_item.select_one('.title')
+                desc_elem = donation_item.select_one('.desc')
+                
+                d_title = title_elem.get_text(strip=True) if title_elem else ""
+                d_desc = desc_elem.get_text(strip=True) if desc_elem else ""
+                
+                combined_text = f"{d_title} {d_desc}"
+                
+                variants = []
+                clean_text = combined_text.replace('★품절', '').strip()
+                pattern = r'(\[[^\]]+\])([^\[]*)'
+                matches = re.findall(pattern, clean_text)
+                
+                if matches:
+                    for marker, content in matches:
+                        content_parts = content.strip().replace(',', ' ').split()
+                        if content_parts:
+                            v_main = f"{marker}{content_parts[0]}"
+                            v_items = content_parts[1:]
+                            variants.append({"mainMenuName": v_main, "items": v_items})
+                        else:
+                            variants.append({"mainMenuName": marker, "items": []})
+                
+                if variants:
+                    existing = daily_results[today_date][res_id].get(c_id, {
+                        "restaurantId": res_id, 
+                        "cornerId": c_id, 
+                        "cornerDisplayName": "천원의 아침밥",
+                        "priceWon": 1000,
+                        "items": ["A/B 메뉴 중 선택"]
+                    })
+                    existing["variants"] = variants
+                    daily_results[today_date][res_id][c_id] = existing
+
+    print("--- Daily Enrichment Completed ---\n") # type: ignore
+
     # 4. 파일 저장 (menus/ 디렉토리)
-    output_dir = "menus"
+    output_dir = OUTPUT_DIR
     if not os.path.exists(output_dir):
         os.makedirs(output_dir)
     
@@ -218,10 +408,8 @@ if __name__ == "__main__":
     if len(sys.argv) > 1:
         target_date = sys.argv[1]
         print(f"Fetching menu for date: {target_date}")
-    else:
-        print("Fetching menu for current week (default)")
-
-    html_data = fetch_menu_html(target_date)
+    # fetch_menu("2024-05-20") # Example usage
+    html_data = fetch_menu_html(target_date) # Defaults to current week (default)
     
     if html_data:
         # Debug: Save to file to inspect content (Optional, keeping for safety)

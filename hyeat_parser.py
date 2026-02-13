@@ -153,9 +153,16 @@ def extract_hyeat_data(html_content):
                 title_elem = item.select_one('.content-item-title')
                 title_text = title_elem.get_text(strip=True) if title_elem else ""
 
-                parts = raw_desc.replace(',', ' ').split()
-                main_menu = parts[0] if parts else "운영없음"
-                sub_items = parts[1:] if len(parts) > 1 else []
+                # Modified: Ramen corner logic
+                if c_id == 'ramen':
+                    # User Request: Ramen corner should have full text in mainMenuName
+                    # e.g. "부대라면(공기밥 +500원)" should not be split
+                    main_menu = raw_desc.replace(',', ' ').strip()
+                    sub_items = []
+                else:
+                    parts = raw_desc.replace(',', ' ').split()
+                    main_menu = parts[0] if parts else "운영없음"
+                    sub_items = parts[1:] if len(parts) > 1 else []
                 variants = []
 
                 # --- Issue 1: Hanyang Plaza General Logic (Side Dishes) ---
@@ -318,8 +325,20 @@ def extract_hyeat_data(html_content):
                     # Existing data from weekly
                     existing_data = daily_results[today_date][res_id].get(c_id, {})
                     
-                    # Daily view structure: Title = Main, Desc = Items (Sides)
-                    items_fixed = daily_desc.replace(',', ' ').split() if daily_desc else []
+                    if c_id == 'ramen':
+                         # If Ramen, combine title and desc into Main Menu Name if needed
+                         # But often Daily View has Title="Ramen Name", Desc="Option"
+                         # We want "Ramen Name(Option)"
+                         if daily_desc:
+                              # If daily_desc starts with '(', just append. Otherwise, maybe verify format?
+                              # For now, append as requested.
+                              daily_title = f"{daily_title}{daily_desc}"
+                              items_fixed = []
+                         else:
+                              items_fixed = []
+                    else:
+                        # Daily view structure: Title = Main, Desc = Items (Sides)
+                        items_fixed = daily_desc.replace(',', ' ').split() if daily_desc else []
                     
                     # Update fields
                     existing_data.update({

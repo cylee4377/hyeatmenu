@@ -27,6 +27,9 @@ jobs:
       - name: Check Python version
         run: python --version
       
+      - name: Clean up old menu files
+        run: rm -rf menus
+
       - name: Run menu parser
         run: |
           echo "Starting menu parser..."

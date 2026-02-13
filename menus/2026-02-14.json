@@ -1,0 +1,20 @@
+{
+  "hanyang_plaza": {},
+  "materials": {
+    "set_meal": {
+      "restaurantId": "materials",
+      "cornerId": "set_meal",
+      "cornerDisplayName": "정식",
+      "mainMenuName": "돈육김치찌개",
+      "priceWon": 6000,
+      "items": [
+        "백미밥",
+        "해물까스*타르소스",
+        "마늘쫑맛살볶음",
+        "도시락김",
+        "배추김치"
+      ]
+    }
+  },
+  "life_science": {}
+}

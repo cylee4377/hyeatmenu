@@ -1,0 +1,67 @@
+{
+  "hanyang_plaza": {
+    "breakfast_1000": {
+      "restaurantId": "hanyang_plaza",
+      "cornerId": "breakfast_1000",
+      "cornerDisplayName": "천원의 아침밥",
+      "mainMenuName": "천원의 아침밥",
+      "priceWon": 1000,
+      "items": [
+        "A/B 메뉴 중 선택"
+      ],
+      "variants": [
+        {
+          "mainMenuName": "휴무입니다.",
+          "items": []
+        }
+      ]
+    }
+  },
+  "materials": {
+    "set_meal": {
+      "restaurantId": "materials",
+      "cornerId": "set_meal",
+      "cornerDisplayName": "정식",
+      "mainMenuName": "돈육된장찌개",
+      "priceWon": 6000,
+      "items": [
+        "흑미밥",
+        "해물까스*타르소스",
+        "볼어묵볶음",
+        "고추잎무침",
+        "석박지",
+        "그린샐러드"
+      ]
+    },
+    "single_dish": {
+      "restaurantId": "materials",
+      "cornerId": "single_dish",
+      "cornerDisplayName": "일품",
+      "mainMenuName": "잡채밥",
+      "priceWon": 6500,
+      "items": [
+        "미니마라탕",
+        "깐풍기",
+        "비트무피클",
+        "요구르트",
+        "배추김치",
+        "그린샐러드"
+      ]
+    },
+    "dinner": {
+      "restaurantId": "materials",
+      "cornerId": "dinner",
+      "cornerDisplayName": "석식",
+      "mainMenuName": "돌솥김치알밥",
+      "priceWon": 6000,
+      "items": [
+        "맑은콩나물국",
+        "옥수수고로케",
+        "청포묵김무침",
+        "무생채",
+        "배추김치"
+      ]
+    }
+  },
+  "life_science": {}
+}

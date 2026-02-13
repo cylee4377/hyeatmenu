@@ -1,0 +1,67 @@
+{
+  "hanyang_plaza": {
+    "breakfast_1000": {
+      "restaurantId": "hanyang_plaza",
+      "cornerId": "breakfast_1000",
+      "cornerDisplayName": "천원의 아침밥",
+      "mainMenuName": "천원의 아침밥",
+      "priceWon": 1000,
+      "items": [
+        "A/B 메뉴 중 선택"
+      ],
+      "variants": [
+        {
+          "mainMenuName": "휴무입니다.",
+          "items": []
+        }
+      ]
+    }
+  },
+  "materials": {
+    "set_meal": {
+      "restaurantId": "materials",
+      "cornerId": "set_meal",
+      "cornerDisplayName": "정식",
+      "mainMenuName": "뼈해장국",
+      "priceWon": 6000,
+      "items": [
+        "흑미밥",
+        "치킨까스*머스타드",
+        "감자채볶음",
+        "숙주나물",
+        "배추김치",
+        "마카로니과자"
+      ]
+    },
+    "single_dish": {
+      "restaurantId": "materials",
+      "cornerId": "single_dish",
+      "cornerDisplayName": "일품",
+      "mainMenuName": "김치볶음밥*눈꽃치즈",
+      "priceWon": 6500,
+      "items": [
+        "크림스파게티",
+        "우동국물",
+        "케이준치킨샐러드",
+        "요구르트",
+        "배추김치",
+        "마카로니과자"
+      ]
+    },
+    "dinner": {
+      "restaurantId": "materials",
+      "cornerId": "dinner",
+      "cornerDisplayName": "석식",
+      "mainMenuName": "새우튀김모밀",
+      "priceWon": 6000,
+      "items": [
+        "추가밥",
+        "갈비만두",
+        "무말랭이무침",
+        "요구르트",
+        "배추김치"
+      ]
+    }
+  },
+  "life_science": {}
+}

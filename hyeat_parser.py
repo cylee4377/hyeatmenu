@@ -16,6 +16,29 @@ MENU_URL = os.getenv("MENU_URL", "https://fnb.hanyang.ac.kr/front/fnbmMdMenu")
 OUTPUT_DIR = os.getenv("OUTPUT_DIR", "menus")
 USER_AGENT = os.getenv("USER_AGENT", "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36")
 
+# Price Mapping (Hardcoded based on user request)
+CORNER_PRICES = {
+    'hanyang_plaza': {
+        'western': 4800,
+        'korean': 4800,
+        'instant': 4800,
+        'cupbap': 4800,
+        'ramen': 3500,
+        # breakfast_1000 is handled separately
+    },
+    'materials': {
+        'set_meal': 6000,
+        'single_dish': 6500,
+        'dinner': 6000,
+        'rice_bowl': 4700 # '덮밥' -> rice_bowl mapping assumed if corner_map updated
+    },
+    'life_science': {
+        'pangeos_lunch': 6500,
+        'dam_a_lunch': 6000,
+        'dam_a_dinner': 6000
+    }
+}
+
 def fetch_menu_html(date_str=None):
     """
     Fetches menu HTML from the Hanyang University F&B website.
@@ -72,29 +95,6 @@ def extract_hyeat_data(html_content):
         '천원의 아침밥': 'breakfast_1000', '한식': 'korean', '양식': 'western', 
         '즉석': 'instant', '오늘의 컵밥': 'cupbap', '오늘의 라면': 'ramen',
         '정식': 'set_meal', '일품': 'single_dish', '석식': 'dinner'
-    }
-
-    # Price Mapping (Hardcoded based on user request)
-    CORNER_PRICES = {
-        'hanyang_plaza': {
-            'western': 4200,
-            'korean': 4200,
-            'instant': 4500,
-            'cupbap': 4500,
-            'ramen': 3500,
-            # breakfast_1000 is handled separately
-        },
-        'materials': {
-            'set_meal': 6000,
-            'single_dish': 6500,
-            'dinner': 6000,
-            'rice_bowl': 4700 # '덮밥' -> rice_bowl mapping assumed if corner_map updated
-        },
-        'life_science': {
-            'pangeos_lunch': 6500,
-            'dam_a_lunch': 6000,
-            'dam_a_dinner': 6000
-        }
     }
 
     # 날짜별 데이터를 담을 딕셔너리

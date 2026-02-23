@@ -1,9 +1,9 @@
 name: Update Hanyang Menu Data
 
 on:
-  schedule:
+ # schedule:
     # 매주 월요일 00:10 (KST) 실행
-    - cron: '10 15 * * 0'  # UTC 15:10 일요일 = KST 00:10 월요일
+ #   - cron: '10 15 * * 0'  # UTC 15:10 일요일 = KST 00:10 월요일
   workflow_dispatch:  # 수동 실행 가능
 
 jobs:
